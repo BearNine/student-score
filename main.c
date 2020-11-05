@@ -1,81 +1,47 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include <string.h>
-#define Max1 30
-#define Max2 6
 
-typedef struct student
-    {
-        unsigned long int studentID;
-        char name[12];
-        int score[Max2];
-        int stuscoretotal;
-        float stuscoreaver;
-        int rank;
-        int namerank;
-    }STUDENT;
-
-
-void Inputrecord(int number,STUDENT stu[],int clanum);
-void NameRise(int number,STUDENT stu[]);
-void StuTotal(int number,STUDENT stu[],int clanum);
-void StuAver(int number,STUDENT stu[],int clanum);
-void Total(int number,STUDENT stu[],int clanum,int total[]);
-void Average(int number,int total[],float scoreaver[],int clanum);
-void Hight(int number,STUDENT stu[]);
-void Low(int number,STUDENT stu[]);
-void StuIDrise(int number,STUDENT stu[]);
-int IDFind(int number,STUDENT stu[],unsigned long int want);
-int NameFind(int number,STUDENT stu[],char namewant[]);
-void nextPage();
-void NextPage();
-
-
+void Inputrecord(int number,float score[],int student_number[],char name[][40]);
+float Total(float score[],int number);
+float Average(float ftotal,int number);
+void Hight(float score[],int student_number[],int number,char name[][40]);
+void Low (float score[],int student_number[],int number,char name[][40]);
+void StuNumSortRise(int student_number[],float score[],int number,char name[][40]);
+int Find (int student_number[],float score[],int number,int want);
+void NameRise (char name[][40],int number,float score[],int student_number[]);
+int NameFind (char name[][40],int number,char namewant[]);
 
 int main()
 {
-    char continue1;
-    STUDENT stu[Max1];
-    int a,b,clanum,ichoice,number,total[Max2];
-    float scoreaver[Max2];
-    flag:nextPage();
-    printf("       |-----------------------------------------------------------------|\n");
-    printf("       |* 1. Input record                                               *|\n");
-    printf("       |* 2. Calculate total and average score of every course          *|\n");
-    printf("       |* 3. Calculate total and average score of every student         *|\n");
-    printf("       |* 4. Sort in descending order by total score of every student   *|\n");
-    printf("       |* 5. Sort in ascending order by total score of every student    *|\n");
-    printf("       |* 6. Sort in ascending order by number                          *|\n");
-    printf("       |* 7. Sort in dictionary order by name                           *|\n");
-    printf("       |* 8. Search by number                                           *|\n");
-    printf("       |* 9. Search by name                                             *|\n");
-    printf("       |*10. Statistic analysis for every course                        *|\n");
-    printf("       |*11. List record                                                *|\n");
-    printf("       |* 0. Exit                                                       *|\n");
-    printf("       |-----------------------------------------------------------------|\n");
+    int ichoice,a,number;
+    char name[30][40];
+    float score[30];
+    int student_number[30];
+    int name_number[30];
+    flag:printf("       |------------------------------------------------------|\n");
+    printf("       |* 1. Input record                                    *|\n");
+    printf("       |* 2. Calculate total and average score of course     *|\n");
+    printf("       |* 3. Sort in descending order by score               *|\n");
+    printf("       |* 4. Sort in ascending order by score                *|\n");
+    printf("       |* 5. Sort in ascending order by number               *|\n");
+    printf("       |* 6. Sort in dictionary order by name                *|\n");
+    printf("       |* 7. Search by number                                *|\n");
+    printf("       |* 8. Search by name                                  *|\n");
+    printf("       |* 9. Statistic analysis!                             *|\n");
+    printf("       |*10. List record                                     *|\n");
+    printf("       |* 0. Exit                                            *|\n");
+    printf("       |------------------------------------------------------|\n");
     printf("Please enter your choice:");
     scanf("%d",&ichoice);
-    nextPage();
     if (ichoice==1)
     {
         printf("The number of student is:");
         scanf("%d",&number);
-        printf("The number of class is:");
-        scanf("%d",&clanum);
         while(getchar()!='\n');
-        Inputrecord(number,stu,clanum);
+        Inputrecord(number,score,student_number,name);
         a=1;
-        StuTotal(number,stu,clanum);
-        StuAver(number,stu,clanum);
-        Hight(number,stu);
-        printf("\n\n\n");
-        do
-        {
-            b=0;
-            printf("Please input 1 to continue:");
-            scanf("%d",&b);
-            while(getchar()!='\n');
-        }while(b!=1);
         goto flag;
     }
     if (ichoice==2)
@@ -83,66 +49,33 @@ int main()
         if (a!=1)
         {
             printf("Please input record\n");
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
         if (a==1)
         {
-            Total(number,stu,clanum,total);
-            Average(number,total,scoreaver,clanum);
-            for (int counter=1;counter<=clanum;counter++)
-            {
-                printf("The %d class total is %d and the average is %f\n",counter,total[counter-1],scoreaver[counter-1]);
-            }
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
+            float ftotal,faverage;
+            ftotal=Total(score,number);
+            faverage=Average(ftotal,number);
+            printf("The total is %f and the average is %f\n\n\n",ftotal,faverage);
             goto flag;
         }
+
     }
     if (ichoice==3)
     {
         if (a!=1)
         {
             printf("Please input record\n");
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
         if (a==1)
         {
-            StuTotal(number,stu,clanum);
-            StuAver(number,stu,clanum);
-            for (int counter=1;counter<=number;counter++)
+          int counter;
+            Hight(score,student_number,number,name);
+            for (counter=1;counter<=number;counter++)
             {
-                printf("The %s's allscore is %d and the average is %f\n",stu[counter-1].name,stu[counter-1].stuscoretotal,stu[counter-1].stuscoreaver);
+                printf("%s's score is %f    studentnumber is %d\n",name[counter-1],score[counter-1],student_number[counter-1]);
             }
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
     }
@@ -151,32 +84,16 @@ int main()
         if (a!=1)
         {
             printf("Please input record\n");
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
         if (a==1)
         {
             int counter;
-            Hight(number,stu);
+            Low(score,student_number,number,name);
             for (counter=1;counter<=number;counter++)
             {
-                printf("%s's rank is %d total score is %d\n",stu[counter-1].name,counter,stu[counter-1].stuscoretotal);
+                printf("%s's score is %f    studentnumber is %d\n",name[counter-1],score[counter-1],student_number[counter-1]);
             }
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
     }
@@ -185,32 +102,16 @@ int main()
         if (a!=1)
         {
             printf("Please input record\n");
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
         if (a==1)
         {
             int counter;
-            Low(number,stu);
+            StuNumSortRise(student_number,score,number,name);
             for (counter=1;counter<=number;counter++)
             {
-                printf("%s's rank is %d total score is %d\n",stu[counter-1].name,number+1-counter,stu[counter-1].stuscoretotal);
+                printf("%s's score is %f\n",name[counter-1],score[counter-1]);
             }
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
     }
@@ -219,113 +120,62 @@ int main()
         if (a!=1)
         {
             printf("Please input record\n");
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
         if (a==1)
         {
-            Hight(number,stu);
-            StuIDrise(number,stu);
+            NameRise(name,number,score,student_number);
             for (int counter=1;counter<=number;counter++)
             {
-                printf("%s's ID is %ld and allscore is:%d and rank is:%d\n",stu[counter-1].name,stu[counter-1].studentID,stu[counter-1].stuscoretotal,stu[counter-1].rank);
+                printf("%s's score is %f\n",name[counter-1],score[counter-1]);
             }
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
     }
     if (ichoice==7)
     {
+        int want;
         if (a!=1)
         {
             printf("Please input record\n");
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
         if (a==1)
         {
-            NameRise(number,stu);
-            for (int counter=1;counter<=number;counter++)
+            int irank=-1;
+            printf("Input the student_number's number you want to chack:");
+            scanf("%d",&want);
+            Hight(score,student_number,number,name);
+            irank=Find(student_number,score,number,want);
+            if (irank==-1)
             {
-                printf("%s's allsocre is %d and rank is %d\n",stu[counter-1].name,stu[counter-1].stuscoretotal,stu[counter-1].rank);
+                printf("Don't have the person\n");
             }
-            printf("\n\n\n");
-            do
+            else
             {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
+                printf("The student's score is %f and rank is %d\n",score[irank],irank+1);
+            }
             goto flag;
         }
     }
     if (ichoice==8)
     {
+        int want2;
+        char namewant[40];
         if (a!=1)
         {
             printf("Please input record\n");
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
         if (a==1)
         {
-            unsigned long int IDwant;
-            int want1=-1;
-            printf("Please input the studentID you want to chack:");
-            scanf("%ld",&IDwant);
             getchar();
-            want1=IDFind(number,stu,IDwant);
-            if (want1==-1)
-            {
-                printf("Don't have the student!");
-            }
-            else
-            {
-                printf("Name\tRank\tClass1\tClass2\tClass3\tClass4\tClass5\tClass6\t\n");
-                printf("%s\t%d\t",stu[want1].name,stu[want1].rank);
-                for (int counter=1;counter<=clanum;counter++)
-                {
-                    printf("%d\t",stu[want1].score[counter-1]);
-                }
-                printf("\n");
-            }
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
+            printf("Input the name you want to find:");
+            fgets(namewant,10,stdin);
+            namewant[strlen(namewant)-1]='\0';
+            Hight(score,student_number,number,name);
+            want2=NameFind(name,number,namewant);
+            printf("%s's rank is %d and score is %f\n",name[want2],want2+1,score[want2]);
             goto flag;
         }
     }
@@ -334,47 +184,40 @@ int main()
         if (a!=1)
         {
             printf("Please input record\n");
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
         if (a==1)
         {
-            int want2=-1;
-            char namewant[12];
-            while(getchar()!='\n');
-            printf("Please input the name you want to chack:");
-            fgets(namewant,12,stdin);
-            namewant[strlen(namewant)-1]='\0';
-            want2=NameFind(number,stu,namewant);
-            if (want2==-1)
+            int excll,good,mid,pass,faile;
+            excll=0;
+            good=0;
+            mid=0;
+            pass=0;
+            faile=0;
+            for (int counter=1;counter<=number;counter++)
             {
-                printf("Don't have the student!");
-            }
-            else
-            {
-                printf("Name\tRank\tClass1\tClass2\tClass3\tClass4\tClass5\tClass6\t\n");
-                printf("%s\t%d\t",stu[want2].name,stu[want2].rank);
-                for (int counter=1;counter<=clanum;counter++)
+                if (score[counter-1]<=100&&score[counter-1]>=90)
                 {
-                    printf("%d\t",stu[want2].score[counter-1]);
+                    excll++;
                 }
-                printf("\n");
+                else if (score[counter-1]<=89&&score[counter-1]>=80)
+                {
+                    good++;
+                }
+                else if (score[counter-1]<=79&&score[counter-1]>=70)
+                {
+                    mid++;
+                }
+                else if (score[counter-1]<=69&&score[counter-1]>=60)
+                {
+                    pass++;
+                }
+                else
+                {
+                    faile++;
+                }
             }
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
+            printf("Excllent:%d  %f%%\nGood:%d  %f%%\nMid:%d  %f%%\nPass:%d  %f\nFaile:%d  %f\n",excll,(float)excll*100/number,good,(float)good*100/number,mid,(float)mid*100/number,pass,(float)pass*100/number,faile,(float)faile*100/number);
             goto flag;
         }
     }
@@ -383,371 +226,204 @@ int main()
         if (a!=1)
         {
             printf("Please input record\n");
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
             goto flag;
         }
         if (a==1)
         {
-            int excll,good,mid,pass,faile;
-            for (int counter1=1;counter1<=clanum;counter1++)
+            float ftotal,faverage;
+            int counter;
+            for (counter=1;counter<=number;counter++)
             {
-                excll=0;
-                good=0;
-                mid=0;
-                pass=0;
-                faile=0;
-                for (int counter2=1;counter2<=number;counter2++)
-                {
-                    if (stu[counter2-1].score[counter1-1]<=100&&stu[counter2-1].score[counter1-1]>=90)
-                    {
-                        excll++;
-                    }
-                    else if (stu[counter2-1].score[counter1-1]<=89&&stu[counter2-1].score[counter1-1]>=80)
-                    {
-                        good++;
-                    }
-                    else if (stu[counter2-1].score[counter1-1]<=79&&stu[counter2-1].score[counter1-1]>=70)
-                    {
-                        mid++;
-                    }
-                    else if (stu[counter2-1].score[counter1-1]<=69&&stu[counter2-1].score[counter1-1]>=60)
-                    {
-                        pass++;
-                    }
-                    else
-                    {
-                        faile++;
-                    }
-                }
-                printf("The class%d:\nExcllent:%d  %f%%\nGood:%d  %f%%\nMid:%d  %f%%\nPass:%d  %f\nFaile:%d  %f\n\n\n",counter1,excll,(float)excll*100/number,good,(float)good*100/number,mid,(float)mid*100/number,pass,(float)pass*100/number,faile,(float)faile*100/number);
+                printf("%-5f   %-10d\n",score[counter-1],student_number[counter-1]);
             }
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
-            goto flag;
-        }
-    }
-    if (ichoice==11)
-    {
-        if (a!=1)
-        {
-            printf("Please input record\n");
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
-            goto flag;
-        }
-        if (a==1)
-        {
-            Total(number,stu,clanum,total);
-            Average(number,total,scoreaver,clanum);
-            printf("Name\tRank\tClass1\tClass2\tClass3\tClass4\tClass5\tClass6\tAllScore\tAverageScore\t\n");
-            for (int counter1=1;counter1<=number;counter1++)
-            {
-                printf("%s\t%d\t",stu[counter1-1].name,stu[counter1-1].rank);
-                for (int counter2=1;counter2<=clanum;counter2++)
-                {
-                    printf("%d\t",stu[counter1-1].score[counter2-1]);
-                }
-                for(int counter3=1;counter3<=6-clanum;counter3++)
-                {
-                    printf("\t");
-                }
-                printf("%d       \t%f\t\n",stu[counter1-1].stuscoretotal,stu[counter1-1].stuscoreaver);
-            }
-            for (int counter4=1;counter4<=clanum;counter4++)
-            {
-                printf("Class%d AllSocre is %d and AverageScore is %f\n",counter4,total[counter4-1],scoreaver[counter4-1]);
-            }
-            printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
+            ftotal=Total(score,number);
+            faverage=Average(ftotal,number);
+            printf("The total is %f and the average is %f\n\n\n",ftotal,faverage);
             goto flag;
         }
     }
     if (ichoice==0)
+    {
         return 0;
-
-
+    }
 }
 
 
-void Inputrecord(int number,STUDENT stu[],int clanum)
+
+
+void Inputrecord(int number,float score[],int student_number[],char name[][40])
 {
     int counter;
-    switch (clanum)
+    for (counter=1;counter<=number;counter++)
     {
-        case 1:
-            for (counter=1;counter<=number;counter++)
-            {
-                printf("Pleas input student's name:");
-                fgets(stu[counter-1].name,12,stdin);
-                stu[counter-1].name[strlen(stu[counter-1].name)-1]='\0';
-                printf("Please input studentID and student's score£¨such as:ID score score score......£©:");
-                scanf("%d %d",&stu[counter-1].studentID,&stu[counter-1].score[0]);
-                while(getchar()!='\n');
-            }
-            break;
-        case 2:
-            for (counter=1;counter<=number;counter++)
-            {
-                printf("Pleas input student's name:");
-                fgets(stu[counter-1].name,12,stdin);
-                stu[counter-1].name[strlen(stu[counter-1].name)-1]='\0';
-                printf("Please input studentID and student's score£¨such as:ID score score score......£©:");
-                scanf("%d %d %d",&stu[counter-1].studentID,&stu[counter-1].score[0],&stu[counter-1].score[1]);
-                while(getchar()!='\n');
-            }
-            break;
-        case 3:
-            for (counter=1;counter<=number;counter++)
-            {
-                printf("Pleas input student's name:");
-                fgets(stu[counter-1].name,12,stdin);
-                stu[counter-1].name[strlen(stu[counter-1].name)-1]='\0';
-                printf("Please input studentID and student's score£¨such as:ID score score score......£©:");
-                scanf("%d %d %d %d",&stu[counter-1].studentID,&stu[counter-1].score[0],&stu[counter-1].score[1],&stu[counter-1].score[2]);
-                while(getchar()!='\n');
-            }
-            break;
-        case 4:
-            for (counter=1;counter<=number;counter++)
-            {
-                printf("Pleas input student's name:");
-                fgets(stu[counter-1].name,12,stdin);
-                stu[counter-1].name[strlen(stu[counter-1].name)-1]='\0';
-                printf("Please input studentID and student's score£¨such as:ID score score score......£©:");
-                scanf("%d %d %d %d %d",&stu[counter-1].studentID,&stu[counter-1].score[0],&stu[counter-1].score[1],&stu[counter-1].score[2],&stu[counter-1].score[3]);
-                while(getchar()!='\n');
-            }
-            break;
-        case 5:
-            for (counter=1;counter<=number;counter++)
-            {
-                printf("Pleas input student's name:");
-                fgets(stu[counter-1].name,12,stdin);
-                stu[counter-1].name[strlen(stu[counter-1].name)-1]='\0';
-                printf("Please input studentID and student's score£¨such as:ID score score score......£©:");
-                scanf("%d %d %d %d %d %d",&stu[counter-1].studentID,&stu[counter-1].score[0],&stu[counter-1].score[1],&stu[counter-1].score[2],&stu[counter-1].score[3],&stu[counter-1].score[4]);
-                while(getchar()!='\n');
-            }
-            break;
-        case 6:
-            for (counter=1;counter<=number;counter++)
-            {
-                printf("Pleas input student's name:");
-                fgets(stu[counter-1].name,12,stdin);
-                stu[counter-1].name[strlen(stu[counter-1].name)-1]='\0';
-                printf("Please input studentID and student's score£¨such as:ID score score score......£©:");
-                scanf("%d %d %d %d %d %d %d",&stu[counter-1].studentID,&stu[counter-1].score[0],&stu[counter-1].score[1],&stu[counter-1].score[2],&stu[counter-1].score[3],&stu[counter-1].score[4],&stu[counter-1].score[5]);
-                while(getchar()!='\n');
-            }
-            break;
+        printf("Please input student's name:");
+        fgets(name[counter-1],8,stdin);
+        name[counter-1][strlen(name[counter-1])-1]='\0';
+        printf("Please input student's score and student_number:");
+        scanf("%f %d",&score[counter-1],&student_number[counter-1]);
+        while(getchar()!='\n');
     }
 }
 
-void Total(int number,STUDENT stu[],int clanum,int total[])
+float Total(float score[],int number)
 {
-    for (int counter1=1;counter1<=clanum;counter1++)
+    float ftotal=0;
+    int counter;
+    for (counter=1;counter<=number;counter++)
     {
-        total[counter1-1]=0;
-       for (int counter2=1;counter2<=number;counter2++)
-        {
-            total[counter1-1]=total[counter1-1]+stu[counter2-1].score[counter1-1];
-        }
+        ftotal=ftotal+score[counter-1];
     }
+    return ftotal;
 }
 
-void StuTotal(int number,STUDENT stu[],int clanum)
+float Average(float ftotal,int number)
 {
-    for (int counter1=1;counter1<=number;counter1++)
-    {
-        stu[counter1-1].stuscoretotal=0;
-        for (int counter2=1;counter2<=clanum;counter2++)
-        {
-            stu[counter1-1].stuscoretotal=stu[counter1-1].stuscoretotal+stu[counter1-1].score[counter2-1];
-        }
-    }
+    float faverage;
+    faverage=ftotal/number;
+    return faverage;
 }
 
-void StuAver(int number,STUDENT stu[],int clanum)
+void Hight(float score[],int student_number[],int number,char name[][40])
 {
-
-    for (int counter=1;counter<=number;counter++)
-    {
-        stu[counter-1].stuscoreaver=(float)stu[counter-1].stuscoretotal/(float)clanum;
-    }
-}
-
-void Average(int number,int total[],float scoreaver[],int clanum)
-{
-    for (int counter1=1;counter1<=clanum;counter1++)
-    {
-        scoreaver[counter1-1]=(float)total[counter1-1]/(float)number;
-    }
-}
-
-void Hight(int number,STUDENT stu[])
-{
-    STUDENT temp;
-    int i,k,j;
+    char temp_name[40];
+    int i,j,k,tem2;
+    float tem1;
     for (i=0;i<number-1;i++)
     {
         k=i;
         for (j=i+1;j<number;j++)
         {
-            if (stu[j].stuscoretotal>stu[k].stuscoretotal)
+            if (score[j]>score[k])
+            {
+                k=j;
+            }
+        }
+        if (k!=i)
+            {
+                tem1=score[i];
+                score[i]=score[k];
+                score[k]=tem1;
+                strcpy(temp_name,name[k]);
+                strcpy(name[k],name[i]);
+                strcpy(name[i],temp_name);
+                tem2=student_number[i];
+                student_number[i]=student_number[k];
+                student_number[k]=tem2;
+            }
+    }
+}
+
+void Low (float score[],int student_number[],int number,char name[][40])
+{
+    char temp_name[40];
+    int i,j,k,tem2;
+    float tem1;
+    for (i=0;i<number-1;i++)
+    {
+        k=i;
+        for (j=i+1;j<number;j++)
+        {
+            if (score[j]<score[k])
+            {
+                k=j;
+            }
+
+        }
+        if (k!=i)
+            {
+                tem1=score[i];
+                score[i]=score[k];
+                score[k]=tem1;
+                strcpy(temp_name,name[k]);
+                strcpy(name[k],name[i]);
+                strcpy(name[i],temp_name);
+                tem2=student_number[i];
+                student_number[i]=student_number[k];
+                student_number[k]=tem2;
+            }
+    }
+}
+
+void StuNumSortRise(int student_number[],float score[],int number,char name[][40])
+{
+    char temp_name[40];
+    int i,j,k,tem2;
+    float tem1;
+    for (i=0;i<number-1;i++)
+    {
+        k=i;
+        for (j=i+1;j<number;j++)
+        {
+            if (student_number[j]<student_number[k])
             {
                 k=j;
             }
         }
         if (k!=i)
         {
-            temp=stu[k];
-            stu[k]=stu[i];
-            stu[i]=temp;
-        }
-    }
-    for (int counter=1;counter<=number;counter++)
-    {
-        stu[counter-1].rank=counter;
-    }
-}
-
-void Low(int number,STUDENT stu[])
-{
-    STUDENT temp;
-    int i,k,j;
-    for (i=0;i<number-1;i++)
-    {
-        k=i;
-        for (j=i+1;j<number;j++)
-        {
-            if (stu[j].stuscoretotal<stu[k].stuscoretotal)
-            {
-                k=j;
-            }
-        }
-        if (k!=i)
-        {
-            temp=stu[k];
-            stu[k]=stu[i];
-            stu[i]=temp;
+            tem1=score[i];
+            score[i]=score[k];
+            score[k]=tem1;
+            strcpy(temp_name,name[k]);
+            strcpy(name[k],name[i]);
+            strcpy(name[i],temp_name);
+            tem2=student_number[i];
+            student_number[i]=student_number[k];
+            student_number[k]=tem2;
         }
     }
 }
 
-void StuIDrise(int number,STUDENT stu[])
-{
-    STUDENT temp;
-    int i,k,j;
-    for (i=0;i<number-1;i++)
-    {
-        k=i;
-        for (j=i+1;j<number;j++)
-        {
-            if (stu[j].studentID<stu[k].studentID)
-            {
-                k=j;
-            }
-        }
-        if (k!=i)
-        {
-            temp=stu[i];
-            stu[i]=stu[k];
-            stu[k]=temp;
-        }
-    }
-}
-
-void NameRise(int number,STUDENT stu[])
-{
-    STUDENT temp;
-    int i,j,k;
-    for (i=0;i<number-1;i++)
-    {
-        k=i;
-        for (j=i+1;j<number;j++)
-        {
-            if (strcmp(stu[j].name,stu[k].name)<0)
-            {
-                k=j;
-            }
-        }
-        if (k!=i)
-        {
-            temp=stu[i];
-            stu[i]=stu[k];
-            stu[k]=temp;
-        }
-    }
-    for (int counter=1;counter<=number;counter++)
-    {
-        stu[counter-1].namerank=counter;
-    }
-}
-
-int IDFind(int number,STUDENT stu[],unsigned long int want)
+int Find (int student_number[],float score[],int number,int want)
 {
     for (int counter=1;counter<=number;counter++)
     {
-        if (want==stu[counter-1].studentID)
+        if (want==student_number[counter-1])
         {
-            return counter-1;
+            return (counter-1);
         }
     }
     return -1;
 }
 
-int NameFind(int number,STUDENT stu[],char namewant[])
+void NameRise (char name[][40],int number,float score[],int student_number[])
+{
+    char temp_name[40];
+    int k,j,tem2;
+    float temp;
+    for (int i=0;i<number-1;i++)
+    {
+        k=i;
+        for (j=i+1;j<number;j++)
+        {
+            if (strcmp(name[j],name[k])<0)
+            {
+                k=j;
+            }
+        }
+        if (k!=i)
+        {
+            strcpy(temp_name,name[k]);
+            strcpy(name[k],name[i]);
+            strcpy(name[i],temp_name);
+            temp=score[i];
+            score[i]=score[k];
+            score[k]=temp;
+            tem2=student_number[i];
+            student_number[i]=student_number[k];
+            student_number[k]=tem2;
+        }
+    }
+}
+
+int NameFind (char name[][40],int number,char namewant[])
 {
     for (int counter=1;counter<=number;counter++)
     {
-        if (strcmp(namewant,stu[counter-1].name)==0)
-        {
-            return counter-1;
-        }
+        if (strcmp(namewant,name[counter-1])==0)
+            return (counter-1);
     }
     return -1;
 }
 
-void nextPage()
-{
-    system("cls");
-}
 
-void NextPage()
-{
-    int b;
-    printf("\n\n\n");
-            do
-            {
-                b=0;
-                printf("Please input 1 to continue:");
-                scanf("%d",&b);
-                while(getchar()!='\n');
-            }while(b!=1);
-            system("cls");
-}
